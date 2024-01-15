@@ -1,4 +1,4 @@
-const QueryTypes = require('sequelize');
+const QueryTypes = require("sequelize");
 const db = require("../models/index");
 const Orders = db.orders;
 const Tables = db.tables;
@@ -47,12 +47,12 @@ exports.getAllByTableId = catchAsync(async (req, res, next) => {
       )
     );
 
-  if (!req.query.submitted) {
-    req.query.submitted = false;
+  if (!req.query.is_paid) {
+    req.query.is_paid = false;
   }
 
   const data = await db.sequelize.query(
-    `SELECT * FROM Orders JOIN "orderDetails" ON Orders.order_id="orderDetails".order_id AND Orders.table_id=${req.params.tid} AND Orders.order_submitted=${req.query.submitted} AND Orders.is_finished=false`,
+    `SELECT * FROM Orders JOIN "orderDetails" ON Orders.order_id="orderDetails".order_id AND Orders.table_id=${req.params.tid} AND Orders.is_paid=${req.query.is_paid} AND Orders.is_finished=false`,
     {
       // type: db.Sequelize.QueryTypes.SELECT,
       model: OrderDetails,
@@ -91,7 +91,7 @@ exports.findOne = catchAsync(async (req, res, next) => {
     if (data) {
       res.status(200).json({
         status: "success",
-        data
+        data,
       });
     } else {
       res.status(404).send({
