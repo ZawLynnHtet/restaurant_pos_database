@@ -34,7 +34,6 @@ module.exports = (sequelize, Sequelize) => {
     },
     cus_name: {
       type: Sequelize.STRING,
-      allowNull: false,
     },
     num_of_people: {
       type: Sequelize.INTEGER,

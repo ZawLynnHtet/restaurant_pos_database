@@ -1,5 +1,5 @@
 const db = require("../models/index");
-const Reservaions = db.reservations;
+const Reservation = db.reservations;
 const catchAsync = require("../middlewares/catchAsync");
 const AppError = require("../middlewares/appError");
 
@@ -18,7 +18,7 @@ exports.create = catchAsync(async (req, res, next) => {
     deposit: req.body.deposit,
   };
 
-  await Reservaions.create(data).then((reservation) => {
+  await Reservation.create(data).then((reservation) => {
     res.status(200).json({
       status: "success",
       reservation,
@@ -36,16 +36,18 @@ exports.getAll = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteAll = catchAsync(async (req, res, next) => {
-  await Reservaions.destroy({ where: {}, truncate: false });
-
-  res.status(200).json({
-    status: "success",
-    message: "Deleted all reservations",
+  await Reservation.destroy({ where: {}, truncate: false }).then((deleted) => {
+    if (deleted) {
+      res.status(200).json({
+        status: "success",
+        message: "Deleted all Reservations",
+      });
+    }
   });
 });
 
 exports.getOne = catchAsync(async (req, res, next) => {
-  const reservation = await Reservaions.findByPk(req.params.id);
+  const reservation = await Reservation.findByPk(req.params.id);
 
   if (!reservation)
     return next(
@@ -62,7 +64,7 @@ exports.getOne = catchAsync(async (req, res, next) => {
 });
 
 exports.edit = catchAsync(async (req, res, next) => {
-  const reservation = await Reservaions.findByPk(req.params.id);
+  const reservation = await Reservation.findByPk(req.params.id);
 
   if (!reservation)
     return next(
@@ -72,7 +74,7 @@ exports.edit = catchAsync(async (req, res, next) => {
       )
     );
 
-  await Reservaions.update(req.body, { where: { id: req.params.id } }).then(
+  await Reservation.update(req.body, { where: { id: req.params.id } }).then(
     (updated) => {
       res.status(200).json({
         status: "success",
@@ -83,7 +85,7 @@ exports.edit = catchAsync(async (req, res, next) => {
 });
 
 exports.delete = catchAsync(async (req, res, next) => {
-  const reservation = await Reservaions.findByPk(req.params.id);
+  const reservation = await Reservation.findByPk(req.params.id);
 
   if (!reservation)
     return next(
@@ -93,7 +95,7 @@ exports.delete = catchAsync(async (req, res, next) => {
       )
     );
 
-  await Reservaions.destroy({ where: { id: req.params.id } });
+  await Reservation.destroy({ where: { id: req.params.id } });
 
   res.status(200).json({
     status: "success",
