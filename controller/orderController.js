@@ -36,7 +36,30 @@ exports.findAll = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getAllByTableId = catchAsync(async (req, res, next) => {
+exports.findByTableId = catchAsync(async (req, res, next) => {
+  console.log(req.params.tid);
+  const table = await Tables.findByPk(req.params.tid);
+  if (!table)
+    return next(
+      new AppError(
+        `No orders found with the provided table id: ${req.params.tid}`,
+        404
+      )
+    );
+  var id = req.params.tid * 1;
+  const data = await Orders.findAll({
+    where: {
+      table_id: id,
+    },
+  });
+  res.status(200).json({
+    status: "success",
+    results: data.length,
+    data,
+  });
+});
+
+exports.getAllByTableIdAndQuery = catchAsync(async (req, res, next) => {
   const table = await Tables.findByPk(req.params.tid);
 
   if (!table)
@@ -60,22 +83,6 @@ exports.getAllByTableId = catchAsync(async (req, res, next) => {
       // order: ['menu_id']
     }
   );
-
-  // const data = await Orders.findAll({
-  //   where: { table_id: req.params.tid },
-  //   include: [
-  //     {
-  //       model: OrderDetails,
-  //       required: true
-  //       // include: [
-  //       //   {
-  //       //     model: Menus,
-  //       //     attributes: ["menu_id", "food_name", "price"],
-  //       //   },
-  //       // ],
-  //     },
-  //   ],
-  // });
 
   res.status(200).json({
     status: "success",

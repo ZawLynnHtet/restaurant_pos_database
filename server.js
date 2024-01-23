@@ -3,6 +3,8 @@ const cors = require("cors");
 const db = require("./models/index");
 const AppError = require("./middlewares/appError");
 const globalErrorHandler = require("./controller/errorController");
+var socket = require("socket.io");
+var connection = require("./connection");
 const dotenv = require("dotenv");
 
 dotenv.config({ path: "./config.env" });
@@ -45,8 +47,44 @@ app.all("*", (req, res, next) => {
 });
 
 app.use(globalErrorHandler);
-app.listen(8080, () => {
+var server = app.listen(8080, () => {
   console.log("-------- Server is listening on port 8080 --------");
+});
+
+const documents = {};
+
+var socketIo = socket(server);
+socketIo.on("connection", (socket) => {
+  let previousId;
+
+  const safeJoin = (currentId) => {
+    socket.leave(previousId);
+    socket.join(currentId, () =>
+      console.log(`Socket ${socket.id} joined room ${currentId}`)
+    );
+    previousId = currentId;
+  };
+
+  socket.on("getDoc", (docId) => {
+    safeJoin(docId);
+    socket.emit("document", documents[docId]);
+  });
+
+  socket.on("addDoc", (doc) => {
+    documents[doc.id] = doc;
+    safeJoin(doc.id);
+    socketIo.emit("documents", Object.keys(documents));
+    socket.emit("document", doc);
+  });
+
+  socket.on("editDoc", (doc) => {
+    documents[doc.id] = doc;
+    socket.to(doc.id).emit("document", doc);
+  });
+
+  socketIo.emit("documents", Object.keys(documents));
+
+  console.log(`Socket ${socket.id} has connected`);
 });
 
 // module.exports = (err, req, res, next) => {

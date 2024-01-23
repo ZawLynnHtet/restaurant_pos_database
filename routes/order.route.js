@@ -4,12 +4,25 @@ module.exports = (app) => {
 
   var router = require("express").Router();
 
-  router.post("/", orders.create).get("/", orders.findAll).delete("/", orders.deleteAll);
+  router
+    .post("/", orders.create)
+    .get("/", orders.findAll)
+    .delete("/", orders.deleteAll);
 
-  router.route('/table/:tid').get(orders.getAllByTableId);
-  router.route("/:id/bills").post(bills.create).get(bills.getAllWithOid).delete(bills.deleteAllWithOrderId);
+  router
+    .route("/table/:tid")
+    .get(orders.getAllByTableIdAndQuery)
+    .get(orders.findByTableId);
+  router
+    .route("/:id/bills")
+    .post(bills.create)
+    .get(bills.getAllWithOid)
+    .delete(bills.deleteAllWithOrderId);
 
-  router.get("/:id", orders.findOne).delete("/:id", orders.delete).patch("/:id", orders.update);
+  router
+    .get("/:id", orders.findOne)
+    .delete("/:id", orders.delete)
+    .patch("/:id", orders.update);
 
   app.use("/api/v1/orders", router);
 };
