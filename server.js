@@ -51,40 +51,18 @@ var server = app.listen(8080, () => {
   console.log("-------- Server is listening on port 8080 --------");
 });
 
-const documents = {};
+var io = socket(server);
+io.on("connection", (socket) => {
+  console.log("a user connected");
 
-var socketIo = socket(server);
-socketIo.on("connection", (socket) => {
-  let previousId;
-
-  const safeJoin = (currentId) => {
-    socket.leave(previousId);
-    socket.join(currentId, () =>
-      console.log(`Socket ${socket.id} joined room ${currentId}`)
-    );
-    previousId = currentId;
-  };
-
-  socket.on("getDoc", (docId) => {
-    safeJoin(docId);
-    socket.emit("document", documents[docId]);
+  socket.on("message", (message) => {
+    console.log(message);
+    io.emit("message", message);
   });
 
-  socket.on("addDoc", (doc) => {
-    documents[doc.id] = doc;
-    safeJoin(doc.id);
-    socketIo.emit("documents", Object.keys(documents));
-    socket.emit("document", doc);
+  socket.on("disconnect", () => {
+    console.log("a user disconnected!");
   });
-
-  socket.on("editDoc", (doc) => {
-    documents[doc.id] = doc;
-    socket.to(doc.id).emit("document", doc);
-  });
-
-  socketIo.emit("documents", Object.keys(documents));
-
-  console.log(`Socket ${socket.id} has connected`);
 });
 
 // module.exports = (err, req, res, next) => {
