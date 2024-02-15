@@ -4,11 +4,9 @@ const db = require("./models/index");
 const AppError = require("./middlewares/appError");
 const globalErrorHandler = require("./controller/errorController");
 var socket = require("socket.io");
-var connection = require("./connection");
 const dotenv = require("dotenv");
 
 dotenv.config({ path: "./config.env" });
-// console.log(process.env);
 
 const app = express();
 
@@ -20,7 +18,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 db.sequelize
-  .sync({ alter: true })
+  .sync()
   .then(() => {
     console.log(" -------- DB Connected --------");
     console.log(" -------- Drop and resync db --------");
@@ -41,6 +39,7 @@ require("./routes/reservation.route")(app);
 require("./routes/categories.route")(app);
 require("./routes/extraFood.route")(app);
 require("./routes/ingredient.route")(app);
+require("./routes/salesAndProfit.route")(app);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`), 404);
@@ -55,9 +54,14 @@ var io = socket(server);
 io.on("connection", (socket) => {
   console.log("a user connected");
 
-  socket.on("message", (message) => {
+  socket.on("kitchen-message", (message) => {
     console.log(message);
-    io.emit("message", message);
+    io.emit("kitchen-message", message);
+  });
+
+  socket.on("bills-message", (message) => {
+    console.log(message);
+    io.emit("bills-message", message);
   });
 
   socket.on("disconnect", () => {
@@ -65,21 +69,21 @@ io.on("connection", (socket) => {
   });
 });
 
-// module.exports = (err, req, res, next) => {
-//   err.statusCode = err.statusCode || 500;
-//   err.status = err.status || "error";
+module.exports = (err, req, res, next) => {
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || "error";
 
-//   if (process.env.NODE_ENVIRONMENT === "development") {
-//     res.status(err.statusCode).json({
-//       status: err.status,
-//       err: err,
-//       message: err.message,
-//       errorStack: err.stack,
-//     });
-//   } else if (process.env.NODE_ENVIRONMENT === "production") {
-//     res.status(err.statusCode).json({
-//       status: err.status,
-//       message: err.message,
-//     });
-//   }
-// };
+  if (process.env.NODE_ENVIRONMENT === "development") {
+    res.status(err.statusCode).json({
+      status: err.status,
+      err: err,
+      message: err.message,
+      errorStack: err.stack,
+    });
+  } else if (process.env.NODE_ENVIRONMENT === "production") {
+    res.status(err.statusCode).json({
+      status: err.status,
+      message: err.message,
+    });
+  }
+};

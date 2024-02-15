@@ -1,13 +1,17 @@
 const { sequelize, Sequelize } = require(".");
 
 module.exports = (sequelize, Sequelize) => {
-  const OrderDetails = sequelize.define(
-    "orderDetails",
+  const KitchenMessages = sequelize.define(
+    "kitchenMessages",
     {
-      orderDetails_id: {
+      kitchenSms_id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
+      },
+      table_id: {
+        type: Sequelize.INTEGER,
+        foreignKey: true,
       },
       order_id: {
         type: Sequelize.INTEGER,
@@ -41,9 +45,9 @@ module.exports = (sequelize, Sequelize) => {
       },
     },
     {
-      timestamp: false,
+      timestamps: false,
     }
   );
 
-  return OrderDetails;
+  return KitchenMessages;
 };

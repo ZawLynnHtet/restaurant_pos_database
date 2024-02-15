@@ -1,9 +1,7 @@
-const QueryTypes = require("sequelize");
 const db = require("../models/index");
 const Orders = db.orders;
 const Tables = db.tables;
 const OrderDetails = db.orderDetails;
-const Menus = db.menus;
 const catchAsync = require("../middlewares/catchAsync");
 const AppError = require("../middlewares/appError");
 

@@ -4,7 +4,8 @@ const Orders = db.orders;
 const Menus = db.menus;
 const catchAsync = require("../middlewares/catchAsync");
 const AppError = require("../middlewares/appError");
-const { or } = require("sequelize");
+const { Op } = require("sequelize");
+const moment = require("moment");
 
 exports.create = catchAsync(async (req, res, next) => {
   const orderDetails = {
@@ -32,6 +33,20 @@ exports.findAll = catchAsync(async (req, res, next) => {
       status: "success",
       data,
     });
+  });
+});
+
+exports.getByEachDay = catchAsync(async (req, res, next) => {
+  const data = await db.orderDetails.findAll({
+    where: {
+      createdAt: {
+        [Op.gte]: moment().subtract(7, "days").toDate(),
+      },
+    },
+  });
+  res.status(200).json({
+    status: "success",
+    data,
   });
 });
 

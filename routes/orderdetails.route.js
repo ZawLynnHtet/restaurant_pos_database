@@ -3,11 +3,18 @@ module.exports = (app) => {
 
   var router = require("express").Router();
 
-  router.post("/", orderDetails.create).get("/", orderDetails.findAll).delete("/", orderDetails.deleteAll);
+  router
+    .post("/", orderDetails.create)
+    .get("/", orderDetails.findAll)
+    .delete("/", orderDetails.deleteAll);
+  router.route("/day").get(orderDetails.getByEachDay);
 
-  router.route('/order/:oid').get(orderDetails.findByOrderId);
+  router.route("/order/:oid").get(orderDetails.findByOrderId);
 
-  router.get("/:id", orderDetails.findOne).delete("/:id", orderDetails.delete).patch("/:id", orderDetails.update);
+  router
+    .get("/:id", orderDetails.findOne)
+    .delete("/:id", orderDetails.delete)
+    .patch("/:id", orderDetails.update);
 
   app.use("/api/v1/orderdetails", router);
 };
