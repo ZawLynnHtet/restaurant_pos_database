@@ -39,7 +39,6 @@ require("./routes/reservation.route")(app);
 require("./routes/categories.route")(app);
 require("./routes/extraFood.route")(app);
 require("./routes/ingredient.route")(app);
-require("./routes/salesAndProfit.route")(app);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`), 404);
