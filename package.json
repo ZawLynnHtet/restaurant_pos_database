@@ -4,7 +4,7 @@
   "description": "restaurant point of sale system with postgres and sequelize in nodejs express",
   "main": "server.js",
   "engines": {
-    "node": "20.x"
+    "node": "18.x"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
