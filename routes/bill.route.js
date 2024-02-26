@@ -3,10 +3,11 @@ module.exports = (app) => {
   var router = require("express").Router();
 
   router.route("/").get(bills.getAllBill);
-  router.route("/daily").get(bills.getIncomeByDaily);
+  // router.route("/daily").get(bills.getIncomeByDaily);
   router.route("/monthly").get(bills.getIncomeByMonthly);
   router.route("/each-month").get(bills.getIncomeByEachMonth);
   router.route("/date").get(bills.getIncomeByEachDay);
+  router.route("/weekly").get(bills.getIncomeByWeekly);
   router
     .route("/:bid")
     .get(bills.getOneWithBillId)

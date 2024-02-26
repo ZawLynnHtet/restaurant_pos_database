@@ -4,6 +4,7 @@ const Tables = db.tables;
 const OrderDetails = db.orderDetails;
 const catchAsync = require("../middlewares/catchAsync");
 const AppError = require("../middlewares/appError");
+const { Op } = require("sequelize");
 
 exports.create = catchAsync(async (req, res, next) => {
   const orders = {
@@ -82,6 +83,40 @@ exports.getAllByTableIdAndQuery = catchAsync(async (req, res, next) => {
     }
   );
 
+  res.status(200).json({
+    status: "success",
+    results: data.length,
+    data,
+  });
+});
+
+exports.getOrderCount = catchAsync(async (req, res, next) => {
+  const currentDate = new Date();
+
+  const startOfDay = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    currentDate.getDate(),
+    0,
+    0,
+    0
+  );
+  const endOfDay = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    currentDate.getDate(),
+    23,
+    59,
+    59
+  );
+
+  const data = await Orders.findAll({
+    where: {
+      orderDate: {
+        [Op.between]: [startOfDay, endOfDay],
+      },
+    },
+  });
   res.status(200).json({
     status: "success",
     results: data.length,

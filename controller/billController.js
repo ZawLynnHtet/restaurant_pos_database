@@ -88,17 +88,45 @@ exports.getIncomeByEachMonth = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getIncomeByDaily = catchAsync(async (req, res, next) => {
-  const currentDate = new Date();
-  const firstDayOfMonth = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    1
+// exports.getIncomeByDaily = catchAsync(async (req, res, next) => {
+//   const currentDate = new Date();
+//   const firstDayOfMonth = new Date(
+//     currentDate.getFullYear(),
+//     currentDate.getMonth(),
+//     1
+//   );
+//   const lastDayOfMonth = new Date(
+//     currentDate.getFullYear(),
+//     currentDate.getMonth() + 1,
+//     0
+//   );
+
+//   const data = await Bills.findAll({
+//     attributes: [
+//       [Sequelize.literal(`DATE("createdAt")`), "date"],
+//       [Sequelize.fn("SUM", Sequelize.col("total_price")), "totalPrice"],
+//     ],
+//     where: {
+//       createdAt: {
+//         [Op.between]: [firstDayOfMonth, lastDayOfMonth],
+//       },
+//     },
+//     group: [Sequelize.literal(`DATE("createdAt")`)],
+//   });
+//   res.status(200).json({
+//     status: "success",
+//     results: data.length,
+//     data,
+//   });
+// });
+
+exports.getIncomeByWeekly = catchAsync(async (req, res, next) => {
+  const today = new Date();
+  const firstDayOfWeek = new Date(
+    today.setDate(today.getDate() - today.getDay())
   );
-  const lastDayOfMonth = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth() + 1,
-    0
+  const lastDayOfWeek = new Date(
+    today.setDate(today.getDate() - today.getDay() + 6)
   );
 
   const data = await Bills.findAll({
@@ -108,7 +136,7 @@ exports.getIncomeByDaily = catchAsync(async (req, res, next) => {
     ],
     where: {
       createdAt: {
-        [Op.between]: [firstDayOfMonth, lastDayOfMonth],
+        [Op.between]: [firstDayOfWeek, lastDayOfWeek],
       },
     },
     group: [Sequelize.literal(`DATE("createdAt")`)],
@@ -135,7 +163,7 @@ exports.getIncomeByEachDay = catchAsync(async (req, res, next) => {
     searchDate.getDate() + 1
   );
 
-  const data = await Bills.findOne({
+  const data = await Bills.findAll({
     attributes: [
       [Sequelize.literal(`DATE("createdAt")`), "date"],
       [Sequelize.fn("SUM", Sequelize.col("total_price")), "totalPrice"],

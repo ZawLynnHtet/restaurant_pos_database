@@ -4,7 +4,7 @@ const Orders = db.orders;
 const Menus = db.menus;
 const catchAsync = require("../middlewares/catchAsync");
 const AppError = require("../middlewares/appError");
-const { Op } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
 const moment = require("moment");
 
 exports.create = catchAsync(async (req, res, next) => {
@@ -43,6 +43,29 @@ exports.getByEachDay = catchAsync(async (req, res, next) => {
         [Op.gte]: moment().subtract(7, "days").toDate(),
       },
     },
+  });
+  res.status(200).json({
+    status: "success",
+    data,
+  });
+});
+
+exports.getPopularMenu = catchAsync(async (req, res, next) => {
+  const currentDate = new Date();
+  const startOfWeek = new Date(currentDate);
+  startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
+
+  const data = await OrderDetails.findAll({
+    where: {
+      createdAt: {
+        [Op.between]: [startOfWeek, currentDate],
+      },
+    },
+    attributes: [
+      "menu_id",
+      [Sequelize.fn("SUM", Sequelize.col("quantity")), "percentage"],
+    ],
+    group: ["menu_id"],
   });
   res.status(200).json({
     status: "success",

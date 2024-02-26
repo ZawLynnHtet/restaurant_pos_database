@@ -35,6 +35,7 @@ db.orderDetails = require("./orderdetails_model")(sequelize, Sequelize);
 db.bills = require("./bill_model")(sequelize, Sequelize);
 db.reservations = require("./reservation_model")(sequelize, Sequelize);
 db.categories = require("./category_model")(sequelize, Sequelize);
+db.messages = require("./message_model")(sequelize, Sequelize);
 
 // db.orders.hasMany(db.tables, { foreignKey: "table_id" });
 // db.tables.belongsTo(db.orders, { foreignKey: "table_id" });

@@ -18,7 +18,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 db.sequelize
-  .sync()
+  .sync({ alter: true, drop: false })
   .then(() => {
     console.log(" -------- DB Connected --------");
     console.log(" -------- Drop and resync db --------");
@@ -39,6 +39,7 @@ require("./routes/reservation.route")(app);
 require("./routes/categories.route")(app);
 require("./routes/extraFood.route")(app);
 require("./routes/ingredient.route")(app);
+require("./routes/message.route")(app);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`), 404);
@@ -53,14 +54,9 @@ var io = socket(server);
 io.on("connection", (socket) => {
   console.log("a user connected");
 
-  socket.on("kitchen-message", (message) => {
+  socket.on("message", (message) => {
     console.log(message);
-    io.emit("kitchen-message", message);
-  });
-
-  socket.on("bills-message", (message) => {
-    console.log(message);
-    io.emit("bills-message", message);
+    io.emit("message", message);
   });
 
   socket.on("disconnect", () => {

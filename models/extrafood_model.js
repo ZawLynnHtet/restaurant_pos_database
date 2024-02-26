@@ -18,6 +18,7 @@ module.exports = (sequelize, Sequelize) => {
       },
       qty: {
         type: Sequelize.INTEGER,
+        defaultValue: 1,
       },
     },
     {

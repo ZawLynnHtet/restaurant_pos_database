@@ -9,6 +9,8 @@ module.exports = (app) => {
     .get("/", orders.findAll)
     .delete("/", orders.deleteAll);
 
+  router.get("/count", orders.getOrderCount);
+
   router
     .route("/table/:tid")
     .get(orders.getAllByTableIdAndQuery)

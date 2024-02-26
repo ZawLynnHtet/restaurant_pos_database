@@ -8,7 +8,7 @@ module.exports = (app) => {
     .get("/", orderDetails.findAll)
     .delete("/", orderDetails.deleteAll);
   router.route("/day").get(orderDetails.getByEachDay);
-
+  router.route("/popular-menu").get(orderDetails.getPopularMenu);
   router.route("/order/:oid").get(orderDetails.findByOrderId);
 
   router
