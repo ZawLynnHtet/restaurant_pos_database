@@ -3,13 +3,6 @@
   "version": "1.0.0",
   "description": "restaurant point of sale system with postgres and sequelize in nodejs express",
   "main": "server.js",
-  "engines": {
-<<<<<<< HEAD
-    "node": "20.x"
-=======
-    "node": "18.x"
->>>>>>> 2165b43da3cf96d978f81b61ae4760e90336529a
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:prod": "SET NODE_ENVIRONMENT=production & nodemon server.js",
